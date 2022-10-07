@@ -1,0 +1,16 @@
+# The parameters "input", "output", "reference" and "primer" are the absolute paths. Do not include the "/" at the end of the paths.
+input     : "/blue/bphl-florida/dongyibo/Dev_flaq_sc2_combine/fastqs"
+bams      : "/blue/bphl-florida/dongyibo/Dev_flaq_sc2_combine/bams"
+assemblies : "/blue/bphl-florida/dongyibo/Dev_flaq_sc2_combine/assemblies"
+output    : "/blue/bphl-florida/dongyibo/Dev_flaq_sc2_combine/output"
+pangolin_docker  : "/apps/staphb-toolkit/containers/pangolin_4.1.2-pdata-1.14.sif"
+pangolin_version : "v4.1.2"
+pangolin_data_version : "v1.13"
+#reference      : "/blue/bphl-florida/dongyibo/Dev_flaq_sc2_nf/reference"
+#primer    : "/blue/bphl-florida/dongyibo/Dev_flaq_sc2_nf/primers"
+# specify if input amplicons were fragmented. If yes, the parameter setting is "frag". If no, the parameter setting is "no_frag". (default: frag)
+#frag : "frag"
+# comma separated list of SOTCs to screen, default as "S:L452R,S:E484K"
+sotc : "S:L452R,S:E484K"
+
+
