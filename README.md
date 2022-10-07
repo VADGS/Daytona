@@ -25,12 +25,12 @@ In addition, the below docker container images are needed in the pipeline. These
 10. sra-human-scrubber_1.1.2021-05-05.sif
 
 ## How to run
-### If the sequence datasets are NOT from clearlabs: 
+### 1) If the sequence datasets are NOT from clearlabs: 
 1. put your data files into directory /fastqs. Your data file's name should look like "JBS22002292_1.fastq.gz", "JBS22002292_2.fastq.gz". Test data can be found in the directory /fastqs/testdata. If you want to use the test data, copy them to the directory /fastqs.
 2. open file "parames.yaml", set the parameters. 
 3. get into the directory of the pipeline, run "sbatch ./sbatch_flaq_sc2_combine.sh"
 
-### If the sequence datasets are from clearlabs: 
+### 2) If the sequence datasets are from clearlabs: 
 1. put your data files into directories /fastqs, /bams, and /assemblies. Test data can be found in these directories. If you want to use the test data, copy them to the directories /fastqs, /bams, and /assemblies. 
 2. open file "parames_clearlabs.yaml", set the parameters. 
 3. get into the directory of the pipeline, run "sbatch ./sbatch_flaq_sc2_combine.sh clearlabs"
