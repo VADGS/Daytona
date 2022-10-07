@@ -1,11 +1,8 @@
 # Daytona_combine
 A combine of Daytona and Daytona_cl
 
-
-<h1 align="center">Daytona</h1>
-
 ## What to do
-The pipeline is a Nextflow version of the Flaq_flaq_sc2 pipeline (FL BPHL's SARS-CoV-2 analysis pipeline). And the function of human read removal is added to the pipeline. 
+The pipeline is a combine of Daytona and Daytona_cl. The SARS-CoV-2 sequences from clearlabs or other sequencing machine, such as illumina, can all be analyzed by the pipeline.
 
 ## Prerequisites
 Nextflow should be installed. The detail of installation can be found in https://github.com/nextflow-io/nextflow.
@@ -28,36 +25,15 @@ In addition, the below docker container images are needed in the pipeline. These
 10. sra-human-scrubber_1.1.2021-05-05.sif
 
 ## How to run
-1. put your data files into directory /fastqs. Your data file's name should look like "JBS22002292_1.fastq.gz", "JBS22002292_2.fastq.gz" 
+### If the sequence datasets are NOT from clearlabs: 
+1. put your data files into directory /fastqs. Your data file's name should look like "JBS22002292_1.fastq.gz", "JBS22002292_2.fastq.gz". Test data can be found in the directory /fastqs/testdata. If you want to use the test data, copy them to the directory /fastqs.
 2. open file "parames.yaml", set the parameters. 
-3. get into the directory of the pipeline, run "sbatch ./sbatch_flaq_sc2_nf.sh"
+3. get into the directory of the pipeline, run "sbatch ./sbatch_flaq_sc2_combine.sh"
 
-#### Note: some sample data files can be found in directory /fastqs/sample_data
-
-<h1 align="center">Daytona_cl</h1>
-
-## What to do
-The pipeline is a Nextflow version of the Flaq_flaq_sc2_clearlabs pipeline (FL BPHL's SARS-CoV-2 analysis pipeline). 
-
-## Prerequisites
-Nextflow should be installed. The detail of installation can be found in https://github.com/nextflow-io/nextflow.
-
-Python3 is needed.
-
-Singularity is also needed. The detail of installation can be found in https://singularity-tutorial.github.io/01-installation/.
-
-In addition, the below docker container images are needed in the pipeline. These images should be downloaded to the directory /apps/staphb-toolkit/containers/ in your local computer. You can find them from ncbi/sra-human-scrubber (https://hub.docker.com/r/ncbi/sra-human-scrubber) and StaPH-B/docker-builds (https://github.com/StaPH-B/docker-builds).
-
-1. samtools_1.12.sif
-2. vadr_1.3.sif
-3. pangolin_4.1.2-pdata-1.13.sif
-4. nextclade_2021-03-15.sif
-5. sra-human-scrubber_1.1.2021-05-05.sif
-
-## How to run
-1. put your data files into directories /fastqs, /bams, and /assemblies. some example data can be found in these directories. Be make sure delete them when you copy your own data to these directories.
-2. open file "parames.yaml", set the parameters. 
-3. get into the directory of the pipeline, run "sbatch ./sbatch_flaq_sc2_clearlabs.sh"
+### If the sequence datasets are from clearlabs: 
+1. put your data files into directories /fastqs, /bams, and /assemblies. Test data can be found in these directories. If you want to use the test data, copy them to the directories /fastqs, /bams, and /assemblies. 
+2. open file "parames_clearlabs.yaml", set the parameters. 
+3. get into the directory of the pipeline, run "sbatch ./sbatch_flaq_sc2_combine.sh clearlabs"
 
 ## Results
 All results can be found in the directory /output.
