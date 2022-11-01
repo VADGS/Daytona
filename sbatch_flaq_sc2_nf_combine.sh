@@ -7,6 +7,7 @@
 #SBATCH --mem=100gb
 #SBATCH --output=flaq_sc2_nf.%j.out
 #SBATCH --error=flaq_sc2_nf.%j.err
+#SBATCH --time=3-00
 
 
 module load singularity
@@ -14,7 +15,7 @@ module load singularity
 if [ "$1" = "clearlabs" ]; then
    ##### run clearlabs pipeline
    echo "run clearlabs pipeline"
-   nextflow run flaq_sc2_clearlabs.nf -params-file params_clearlabs.yaml
+   nextflow run flaq_sc2_clearlabs2.nf -params-file params_clearlabs.yaml
 
    sort ./output/*/report.txt | uniq > ./output/sum_report.txt
    sed -i '/sampleID\treference/d' ./output/sum_report.txt
