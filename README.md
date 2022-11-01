@@ -11,18 +11,6 @@ Python3 is needed.
 
 Singularity is also needed. The detail of installation can be found in https://singularity-tutorial.github.io/01-installation/.
 
-In addition, the below docker container images are needed in the pipeline. These images should be downloaded to the directory /apps/staphb-toolkit/containers/ in your local computer. You can find them from ncbi/sra-human-scrubber (https://hub.docker.com/r/ncbi/sra-human-scrubber) and StaPH-B/docker-builds (https://github.com/StaPH-B/docker-builds).
-
-1. fastqc_0.11.9.sif
-2. trimmomatic_0.39.sif
-3. bbtools_38.76.sif
-4. multiqc_1.8.sif
-5. bwa_0.7.17.sif
-6. samtools_1.12.sif
-7. vadr_1.3.sif
-8. pangolin_4.1.2-pdata-1.13.sif
-9. nextclade_2021-03-15.sif
-10. sra-human-scrubber_1.1.2021-05-05.sif
 
 ## How to run
 ### 1) If the sequence datasets are NOT from clearlabs: 
