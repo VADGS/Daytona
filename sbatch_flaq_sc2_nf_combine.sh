@@ -10,7 +10,8 @@
 #SBATCH --time=3-00
 
 
-module load singularity
+#module load singularity
+module load apptainer
 
 if [ "$1" = "clearlabs" ]; then
    ##### run clearlabs pipeline
