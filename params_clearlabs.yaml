@@ -1,17 +1,18 @@
 # The parameters "input", "bams", "assemblies" and "output" are the absolute paths of the folders. Do not include the "/" at the end of the paths.
-input     : "/blue/bphl-florida/dongyibo/Dev_module_DaytonaCombine/fastqs"
-bams      : "/blue/bphl-florida/dongyibo/Dev_module_DaytonaCombine/bams"
-assemblies : "/blue/bphl-florida/dongyibo/Dev_module_DaytonaCombine/assemblies"
-output    : "/blue/bphl-florida/dongyibo/Dev_module_DaytonaCombine/output"
+input     : "/path/to/fastqs"
+bams      : "/path/to/bams"
+assemblies : "/path/to/assemblies"
+output    : "/path/to/output"
 
 # comma separated list of SOTCs to screen, default as "S:L452R,S:E484K"
 sotc : "S:L452R,S:E484K"
 
 #Do not change the parameter settings below:
-pangolin_docker  : "docker://staphb/pangolin:4.1.2-pdata-1.13"
-pangolin_version : "v4.1.2"
-pangolin_data_version : "v1.13"
+pangolin_docker : "docker://staphb/pangolin:4.3.1-pdata-1.25.1"
+pangolin_version : "v4.3.1"
+pangolin_data_version : "v1.25.1"
 
-
-
+vadr_docker : "docker://staphb/vadr:1.3"
+samtools_docker : "docker://staphb/samtools:1.12"
+nextclade_docker : "docker://nextstrain/nextclade:0.14.1"
 
