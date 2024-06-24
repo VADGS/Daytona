@@ -1,8 +1,8 @@
 # The parameters "input", "output", "reference" and "primer" are the absolute paths. Do not include the "/" at the end of the paths.
-input          : "/blue/bphl-florida/dongyibo/Dev_module_DaytonaCombine/fastqs"
-output    : "/blue/bphl-florida/dongyibo/Dev_module_DaytonaCombine/output"
-reference      : "/blue/bphl-florida/dongyibo/Dev_module_DaytonaCombine/reference"
-primer    : "/blue/bphl-florida/dongyibo/Dev_module_DaytonaCombine/primers"
+input          : "/path/to/fastqs"
+output    : "/path/to/output"
+reference      : "/path/to/reference"
+primer    : "/path/to/primers"
 # specify if input amplicons were fragmented. If yes, the parameter setting is "frag". If no, the parameter setting is "no_frag". (default: frag)
 frag : "frag"
 # comma separated list of SOTCs to screen, default as "S:L452R,S:E484K"
