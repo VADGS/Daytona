@@ -31,11 +31,11 @@ process pystats2 {
     #print(items[-1])
     
     #Generate bam with only mapped reads
-    subprocess.run('singularity exec -B '+"${params.bams}"+':/data /apps/staphb-toolkit/containers/samtools_1.12.sif samtools view -F 4 -u -h /data/' + items[-1] + ' | singularity exec -B '+"${params.bams}"+':/data /apps/staphb-toolkit/containers/samtools_1.12.sif samtools sort > ' + "${params.output}"+"/"+"${x}"+"/"+"${x}"+ '.mapped.sorted.bam', shell=True, check=True)
-    subprocess.run('singularity exec -B '+"${params.output}"+"/"+"${x}"+':/data /apps/staphb-toolkit/containers/samtools_1.12.sif samtools index /data/' + "${x}"+'.mapped.sorted.bam', shell=True, check=True)    
+    subprocess.run('singularity exec -B '+"${params.bams}"+':/data ' + "${params.samtools_docker}" + ' samtools view -F 4 -u -h /data/' + items[-1] + ' | singularity exec -B '+"${params.bams}"+':/data ' + "${params.samtools_docker}" + ' samtools sort > ' + "${params.output}"+"/"+"${x}"+"/"+"${x}"+ '.mapped.sorted.bam', shell=True, check=True)
+    subprocess.run('singularity exec -B '+"${params.output}"+"/"+"${x}"+':/data ' + "${params.samtools_docker}" + ' samtools index /data/' + "${x}"+'.mapped.sorted.bam', shell=True, check=True)    
     
     #Run samtools coverage to get map stats
-    subprocess.run('singularity exec -B '+"${params.output}"+"/"+"${x}"+':/data /apps/staphb-toolkit/containers/samtools_1.12.sif samtools coverage /data/' + "${x}"+ '.mapped.sorted.bam -o /data/' + "${x}" + '.coverage.txt', shell=True, stdout=out_log, stderr=err_log, check=True)
+    subprocess.run('singularity exec -B '+"${params.output}"+"/"+"${x}"+':/data ' + "${params.samtools_docker}" + ' samtools coverage /data/' + "${x}"+ '.mapped.sorted.bam -o /data/' + "${x}" + '.coverage.txt', shell=True, stdout=out_log, stderr=err_log, check=True)
     
     #Get map stats
     with open("${params.output}"+"/"+"${x}"+"/"+"${x}"+'.coverage.txt', 'r') as cov_report:
@@ -79,8 +79,8 @@ process pystats2 {
     pg_flag = ''
     dp_flag = ''
     qc_flag = ''
-    if float(pg) < 79.5:
-        pg_flag = 'FAIL: Percent genome < 80%'
+    if float(pg) < 89.5:
+        pg_flag = 'FAIL: Percent genome < 90%'
         qc_flag = qc_flag + pg_flag
     else:
         if float(depth) < 100:
@@ -95,8 +95,8 @@ process pystats2 {
         subprocess.run('cp ' + "${params.output}"+"/"+"${x}"+"/" + "${x}" + '.consensus.fa '+"${params.output}"+"/"+'assemblies_pass/', shell=True, check=True)
         
         #Run VADR
-        subprocess.run('singularity exec -B '+"${params.output}"+"/"+"${x}"+':/data /apps/staphb-toolkit/containers/vadr_1.3.sif /opt/vadr/vadr/miniscripts/fasta-trim-terminal-ambigs.pl --minlen 50 --maxlen 30000 /data/' + "${x}" + '.consensus.fa > '+"${params.output}"+"/"+"${x}"+"/"+"${x}"+'.trimmed.fasta', shell=True, stdout=out_log, stderr=err_log, check=True)
-        subprocess.run('singularity exec -B '+"${params.output}"+"/"+"${x}"+':/data /apps/staphb-toolkit/containers/vadr_1.3.sif v-annotate.pl --split --cpu 8 --glsearch -s -r --nomisc --mkey sarscov2 --lowsim5seq 6 --lowsim3seq 6 --alt_fail lowscore,insertnn,deletinn --mdir /opt/vadr/vadr-models/ /data/' + "${x}" + '.trimmed.fasta -f /data/vadr_results', shell=True, stdout=out_log, stderr=err_log, check=True)
+        subprocess.run('singularity exec -B '+"${params.output}"+"/"+"${x}"+':/data ' + "${params.vadr_docker}" + ' /opt/vadr/vadr/miniscripts/fasta-trim-terminal-ambigs.pl --minlen 50 --maxlen 30000 /data/' + "${x}" + '.consensus.fa > '+"${params.output}"+"/"+"${x}"+"/"+"${x}"+'.trimmed.fasta', shell=True, stdout=out_log, stderr=err_log, check=True)
+        subprocess.run('singularity exec -B '+"${params.output}"+"/"+"${x}"+':/data ' + "${params.vadr_docker}" + ' v-annotate.pl --noseqnamemax --split --cpu 8 --glsearch -s -r --nomisc --mkey sarscov2 --lowsim5seq 6 --lowsim3seq 6 --alt_fail lowscore,insertnn,deletinn --mdir /opt/vadr/vadr-models/ /data/' + "${x}" + '.trimmed.fasta -f /data/vadr_results', shell=True, stdout=out_log, stderr=err_log, check=True)
 
         #Parse through VADR outputs to get PASS or REVIEW flag
         vadr_flag = ''
@@ -128,7 +128,7 @@ process pystats2 {
         print(lineage)
 
         #Run nextclade
-        subprocess.run('singularity exec -B '+"${params.output}"+"/"+"${x}"+':/data /apps/staphb-toolkit/containers/nextclade_2021-03-15.sif nextclade --input-fasta /data/' + "${x}" + '.consensus.fa --output-csv /data/' + 'nextclade_report.csv', shell=True, check=True)
+        subprocess.run('singularity exec -B '+"${params.output}"+"/"+"${x}"+':/data ' + "${params.nextclade_docker}" + ' nextclade --input-fasta /data/' + "${x}" + '.consensus.fa --output-csv /data/' + 'nextclade_report.csv', shell=True, check=True)
         
         #Parse nextclade output and screen for sotc
         sotc_v = "${params.sotc}".split(',')
@@ -155,4 +155,3 @@ process pystats2 {
         report.write('\t'.join(map(str,results)) + '\n')
     /$
 }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
