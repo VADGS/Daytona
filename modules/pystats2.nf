@@ -149,7 +149,7 @@ process pystats2 {
             sotc_out = (',').join(sotc)
     else:
         vadr_flag = 'NA'
-        lineage = 'NA'
+        #lineage = 'NA'
         sotc_out = 'NA'
     
     pangolin = "${params.pangolin_version}"+'_pdata-'+"${params.pangolin_data_version}"
