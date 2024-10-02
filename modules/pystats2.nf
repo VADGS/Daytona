@@ -9,6 +9,7 @@ process pystats2 {
     $/
     #!/usr/bin/env python3
     import subprocess
+    import pandas as pd
     from Bio import SeqIO
     
     subprocess.run("mkdir -p " + "${params.output}"+"/"+"${x}", shell=True, check=True)
@@ -37,6 +38,10 @@ process pystats2 {
     #Run samtools coverage to get map stats
     subprocess.run('singularity exec -B '+"${params.output}"+"/"+"${x}"+':/data ' + "${params.samtools_docker}" + ' samtools coverage /data/' + "${x}"+ '.mapped.sorted.bam -o /data/' + "${x}" + '.coverage.txt', shell=True, stdout=out_log, stderr=err_log, check=True)
     
+    #Run samtools depth to get S gene stats
+    subprocess.run('singularity exec -B '+"${params.output}"+"/"+"${x}"+':/data ' + "${params.samtools_docker}" + ' samtools depth /data/' + "${x}"+ '.mapped.sorted.bam ' + '| awk \'$2 > 21500\' | awk \'$2 < 25309\' | awk \'$3 < 4000\' > ' + "${params.output}"+"/"+"${x}"+"/"+"${x}"+ '_Sgene_depth.txt', shell=True, stdout=out_log, stderr=err_log, check=True)
+
+
     #Get map stats
     with open("${params.output}"+"/"+"${x}"+"/"+"${x}"+'.coverage.txt', 'r') as cov_report:
         header = cov_report.readline()
@@ -53,10 +58,28 @@ process pystats2 {
         depth = stats[6]
         baseq = stats[7]
         mapq = stats[8]
+
+    #Get s gene stats
+
+    s_gene_df = pd.read_table("${params.output}"+"/"+"${x}"+"/"+"${x}"+'_Sgene_depth.txt',sep='\t',
+        names=['Ref', 'Position', 'SDepth'])
+    s_depth_average = s_gene_df["SDepth"].mean()
+    s_zero_depth = (s_gene_df['SDepth'] == 0).sum()
+    s_less50_depth = (s_gene_df['SDepth'] <= 49.5).sum()
+    s_poor_depth = (s_less50_depth/3809)*100
     
+    #CDC s-gene metrics
+    s_gene_flag = ''
+    if float(s_depth_average) < 49.5:
+        s_gene_flag = 'S gene does NOT pass CDC guidelines < 50%'
+    else:
+        s_gene_flag = 'S gene meets CDC guidelines >50%'
+
+    s_gene_df.to_csv("${params.output}"+"/"+"${x}"+"/"+"${x}"+'_Sgene_depth.txt', sep="\t", index=False)
+  
     #Get percentage of mapped reads/reads
     percent_map = "%0.4f"%(((int(reads_mapped)/int(clean_reads)))*100)
-    
+
     #Get fasta file name
     proc_f = subprocess.run('ls ' + "${params.assemblies}"+"/"+ "${x}" + '*.fasta', shell=True, capture_output=True, text=True, check=True)
     fasta_file = proc_f.stdout.rstrip()
@@ -149,14 +172,13 @@ process pystats2 {
             sotc_out = (',').join(sotc)
     else:
         vadr_flag = 'NA'
-        #lineage = 'NA'
         sotc_out = 'NA'
     
     pangolin = "${params.pangolin_version}"+'_pdata-'+"${params.pangolin_data_version}"
     with open("${params.output}"+"/"+"${x}"+"/report.txt", 'w') as report:
-        header = ['sampleID', 'reference', 'start', 'end', 'num_clean_reads', 'num_mapped_reads', 'percent_mapped_clean_reads', 'cov_bases_mapped', 'percent_genome_cov_map', 'mean_depth', 'mean_base_qual', 'mean_map_qual', 'assembly_length', 'numN', 'percent_ref_genome_cov', 'VADR_flag', 'QC_flag', 'pangolin_version', 'lineage', 'SOTC']
+        header = ['sampleID', 'reference', 'start', 'end', 'num_clean_reads', 'num_mapped_reads', 'percent_mapped_clean_reads', 'cov_bases_mapped', 'percent_genome_cov_map', 'mean_depth', 'mean_base_qual', 'mean_map_qual', 'assembly_length', 'numN', 'percent_ref_genome_cov', 'VADR_flag', 'QC_flag', 'pangolin_version', 'lineage', 'SOTC', 'SGene_depth_average', 'SGene_flag', 'SGene_zero_depth', 'SGene_less50_depth', 'SGene_poor_depth']
         report.write('\t'.join(map(str,header)) + '\n')
-        results = ["${x}", ref_name, start, end, int(clean_reads), reads_mapped, percent_map, cov_bases, cov, depth, baseq, mapq, num_bases, ns, pg, vadr_flag, qc_flag, pangolin, lineage, sotc_out]
+        results = ["${x}", ref_name, start, end, int(clean_reads), reads_mapped, percent_map, cov_bases, cov, depth, baseq, mapq, num_bases, ns, pg, vadr_flag, qc_flag, pangolin, lineage, sotc_out, s_depth_average, s_gene_flag, s_zero_depth, s_less50_depth, s_poor_depth]
         report.write('\t'.join(map(str,results)) + '\n')
     /$
 }
