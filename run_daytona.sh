@@ -203,12 +203,13 @@ if [ "$from_tar" = "tar" ]; then
 
     sort $output_dir/*/report.txt | uniq > $output_dir/sum_report.txt
     sed -i '/sampleID\treference/d' $output_dir/sum_report.txt
-    sed -i '1i sampleID\treference\tstart\tend\tnum_clean_reads\tnum_mapped_reads\tpercent_mapped_clean_reads\tcov_bases_mapped\tpercent_genome_cov_map\tmean_depth\tmean_base_qual\tmean_map_qual\tassembly_length\tnumN\tpercent_ref_genome_cov\tVADR_flag\tQC_flag\tpangolin_version\tlineage\tSOTC' $output_dir/sum_report.txt
+    #sed -i '1i sampleID\treference\tstart\tend\tnum_clean_reads\tnum_mapped_reads\tpercent_mapped_clean_reads\tcov_bases_mapped\tpercent_genome_cov_map\tmean_depth\tmean_base_qual\tmean_map_qual\tassembly_length\tnumN\tpercent_ref_genome_cov\tVADR_flag\tQC_flag\tpangolin_version\tlineage\tSOTC' $output_dir/sum_report.txt
+    sed -i '1i sampleID\treference\tstart\tend\tnum_clean_reads\tnum_mapped_reads\tpercent_mapped_clean_reads\tcov_bases_mapped\tpercent_genome_cov_map\tmean_depth\tmean_base_qual\tmean_map_qual\tassembly_length\tnumN\tpercent_ref_genome_cov\tVADR_flag\tQC_flag\tpangolin_version\tlineage\tSOTC\tSGene_depth_average\tSGene_flag\tSGene_zero_depth\tSGene_less50_depth\tSGene_poor_depth' $output_dir/sum_report.txt
 
-    awk 'BEGIN {FS=OFS="\t"} {print $1,$8,$10,$14,$15,$17,$18,$19}' $output_dir/sum_report.txt > $output_dir/mid_file
-    paste -d'\t' $multi_mets $output_dir/mid_file | awk 'BEGIN {FS=OFS="\t"} {print $3,$4,$5,$6,$7,$8,$9,$10,$2}' > $output_dir/daytona_report.tsv
-    rm $output_dir/mid_file
-
+    awk 'BEGIN {FS=OFS="\t"} {print $1,$8,$10,$14,$15,$17,$18,$19,$20,$21,$22,$23,$24}' $output_dir/sum_report.txt > $output_dir/mid_file
+    paste -d '\t' $multi_mets $output_dir/mid_file | awk 'BEGIN {FS=OFS="\t"} {print $3,$4,$5,$6,$7,$8,$9,$10,$2}' > $output_dir/daytona_report.tsv
+    #rm $output_dir/mid_file
+    
     cat $output_dir/assemblies_pass/*.fa > $output_dir/assemblies_pass.fasta
     singularity exec $nc_d nextclade --input-fasta $output_dir/assemblies_pass.fasta --output-csv $output_dir/nextclade_report_clearlabs.csv
     mv params_clearlabs.yaml $output_dir
